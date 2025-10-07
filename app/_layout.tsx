@@ -25,6 +25,12 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="photo"
+          options={{
+            title: "Agregar Foto",
+          }}
+        />
+        <Stack.Screen
           name="personal-info"
           options={{
             title: "Información Personal",
