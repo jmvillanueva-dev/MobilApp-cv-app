@@ -6,22 +6,32 @@ import {
   StyleSheet,
   TextInputProps,
 } from "react-native";
+import { ControllerRenderProps, FieldError } from "react-hook-form";
+
+type ControllerInputProps = ControllerRenderProps;
 
 interface InputFieldProps extends TextInputProps {
   label: string;
-  error?: string;
+  error?: FieldError;
+  field: ControllerInputProps;
 }
 
-export const InputField = ({ label, error, ...props }: InputFieldProps) => {
+export const InputField = ({ label, error, field, ...props }: InputFieldProps) => {
+
+  const errorMessage = error?.message;
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, error && styles.inputError]}
+        style={[styles.input, errorMessage && styles.inputError]}
         placeholderTextColor="#999"
+        onChangeText={field.onChange}
+        onBlur={field.onBlur}
+        value={field.value}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>
   );
 };
