@@ -1,59 +1,109 @@
 // app/experience.tsx
 
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
 import { useRouter } from "expo-router";
+import React from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { InputField } from "../components/InputField";
+import { DatePickerField } from "../components/DatePickerField";
 import { NavigationButton } from "../components/NavigationButton";
 import { useCVContext } from "../context/CVContext";
 import { Experience } from "../types/cv.types";
+
+import {
+  ExperienceFormValues,
+  experienceSchema,
+} from "@/validation/experienceSchema";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+
+import dayjs from "dayjs";
+
+type FormValues = ExperienceFormValues;
 
 export default function ExperienceScreen() {
   const router = useRouter();
   const { cvData, addExperience, deleteExperience } = useCVContext();
 
-  const [formData, setFormData] = useState<Omit<Experience, "id">>({
-    company: "",
-    position: "",
-    startDate: "",
-    endDate: "",
-    description: "",
+  // const [formData, setFormData] = useState<Omit<Experience, "id">>({
+  //   company: "",
+  //   position: "",
+  //   startDate: "",
+  //   endDate: "",
+  //   description: "",
+  // });
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(experienceSchema as any),
+    defaultValues: {
+      company: "",
+      position: "",
+      startDate: undefined,
+      endDate: undefined,
+      description: null,
+    },
+    mode: "onBlur",
   });
 
-  const handleAdd = () => {
-    if (!formData.company || !formData.position || !formData.startDate) {
-      Alert.alert(
-        "Error",
-        "Por favor completa al menos empresa, cargo y fecha de inicio"
-      );
-      return;
-    }
 
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
     const newExperience: Experience = {
       id: Date.now().toString(),
-      ...formData,
+      company: data.company,
+      position: data.position,
+      description: data.description || "",
+      startDate: dayjs(data.startDate).format("DD/MM/YYYY"),
+      endDate:
+        !data.endDate
+          ? "Actual"
+          : data.endDate instanceof Date
+          ? dayjs(data.endDate).format("DD/MM/YYYY")
+          : "",
     };
 
     addExperience(newExperience);
-
-    // Limpiar formulario
-    setFormData({
-      company: "",
-      position: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    });
-
+    reset();
     Alert.alert("Éxito", "Experiencia agregada correctamente");
   };
+
+  // const handleAdd = () => {
+  //   if (!formData.company || !formData.position || !formData.startDate) {
+  //     Alert.alert(
+  //       "Error",
+  //       "Por favor completa al menos empresa, cargo y fecha de inicio"
+  //     );
+  //     return;
+  //   }
+
+  //   const newExperience: Experience = {
+  //     id: Date.now().toString(),
+  //     ...formData,
+  //   };
+
+  //   addExperience(newExperience);
+
+  //   // Limpiar formulario
+  //   setFormData({
+  //     company: "",
+  //     position: "",
+  //     startDate: "",
+  //     endDate: "",
+  //     description: "",
+  //   });
+
+  //   Alert.alert("Éxito", "Experiencia agregada correctamente");
+  // };
 
   const handleDelete = (id: string) => {
     Alert.alert("Confirmar", "¿Estás seguro de eliminar esta experiencia?", [
@@ -71,47 +121,82 @@ export default function ExperienceScreen() {
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Agregar Nueva Experiencia</Text>
 
-        <InputField
-          label="Empresa *"
-          placeholder="Nombre de la empresa"
-          value={formData.company}
-          onChangeText={(text) => setFormData({ ...formData, company: text })}
+        <Controller
+          control={control}
+          name="company"
+          render={({ field }) => (
+            <InputField
+              label="Empresa *"
+              placeholder="Nombre de la empresa"
+              field={field}
+              error={errors.company}
+              maxLength={50}
+            />
+          )}
         />
 
-        <InputField
-          label="Cargo *"
-          placeholder="Tu posición"
-          value={formData.position}
-          onChangeText={(text) => setFormData({ ...formData, position: text })}
+        <Controller
+          control={control}
+          name="position"
+          render={({ field }) => (
+            <InputField
+              label="Cargo *"
+              placeholder="Tu posición"
+              field={field}
+              error={errors.position}
+              maxLength={50}
+            />
+          )}
         />
 
-        <InputField
-          label="Fecha de Inicio *"
-          placeholder="Ej: Enero 2020"
-          value={formData.startDate}
-          onChangeText={(text) => setFormData({ ...formData, startDate: text })}
+        <Controller
+          control={control}
+          name="startDate"
+          render={({ field }) => (
+            <DatePickerField
+              label="Fecha de Inicio *"
+              placeholder="Selecciona la fecha de inicio"
+              field={field}
+              error={errors.startDate}
+              maximumDate={new Date()}
+            />
+          )}
         />
 
-        <InputField
-          label="Fecha de Fin"
-          placeholder="Ej: Diciembre 2023 o 'Actual'"
-          value={formData.endDate}
-          onChangeText={(text) => setFormData({ ...formData, endDate: text })}
+        <Controller
+          control={control}
+          name="endDate"
+          render={({ field }) => (
+            <DatePickerField
+              label="Fecha de Fin"
+              placeholder="Selecciona la fecha de fin"
+              field={field}
+              error={errors.endDate}
+              maximumDate={new Date()}
+            />
+          )}
         />
 
-        <InputField
-          label="Descripción"
-          placeholder="Describe tus responsabilidades y logros..."
-          value={formData.description}
-          onChangeText={(text) =>
-            setFormData({ ...formData, description: text })
-          }
-          multiline
-          numberOfLines={4}
-          style={{ height: 100, textAlignVertical: "top" }}
+        <Controller
+          control={control}
+          name="description"
+          render={({ field }) => (
+            <InputField
+              label="Descripción"
+              placeholder="Describe tus responsabilidades y logros..."
+              field={field}
+              error={errors.description}
+              multiline
+              numberOfLines={4}
+              style={{ height: 100, textAlignVertical: "top" }}
+            />
+          )}
         />
 
-        <NavigationButton title="Agregar Experiencia" onPress={handleAdd} />
+        <NavigationButton
+          title="Agregar Experiencia"
+          onPress={handleSubmit(onSubmit)}
+        />
 
         {cvData.experiences.length > 0 && (
           <>
