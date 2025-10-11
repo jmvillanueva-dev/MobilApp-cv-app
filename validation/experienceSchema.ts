@@ -1,9 +1,5 @@
-import * as yup from "yup";
 import dayjs from "dayjs";
-
-const isActualOrDate = (value: any) => {
-  return value === "Actual" || value instanceof Date;
-};
+import * as yup from "yup";
 
 export const experienceSchema = yup.object().shape({
   company: yup
@@ -31,13 +27,12 @@ export const experienceSchema = yup.object().shape({
       "is-date",
       "❌ Debe ser una fecha válida o dejar en blanco.",
       (value) => {
-        // Si está vacío o nulo, pasa (porque es opcional)
-        if (!value || value === null ) return true;
+        if (!value || value === null) return true;
         return dayjs(value).isValid();
       }
     )
     .when("startDate", {
-      is: (startDate:Date) => dayjs(startDate).isValid(),
+      is: (startDate: Date) => dayjs(startDate).isValid(),
       then: (schema) =>
         schema
           .test(
@@ -45,11 +40,7 @@ export const experienceSchema = yup.object().shape({
             "❌ La fecha de fin no puede ser anterior a la de inicio.",
             function (endDate) {
               const { startDate } = this.parent;
-
-              // Si endDate no existe, es válido (campo opcional)
               if (!endDate || !(endDate instanceof Date)) return true;
-
-              // Validar que endDate sea después o igual que startDate
               return dayjs(endDate).isAfter(
                 dayjs(startDate).subtract(1, "day")
               );
@@ -62,4 +53,4 @@ export const experienceSchema = yup.object().shape({
   description: yup.string().nullable().defined(),
 });
 
-export type ExperienceFormValues = yup.InferType<typeof experienceSchema>
+export type ExperienceFormValues = yup.InferType<typeof experienceSchema>;

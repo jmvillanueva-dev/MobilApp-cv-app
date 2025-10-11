@@ -1,54 +1,92 @@
 // app/education.tsx
 
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
 import { useRouter } from "expo-router";
+import React from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { InputField } from "../components/InputField";
 import { NavigationButton } from "../components/NavigationButton";
 import { useCVContext } from "../context/CVContext";
 import { Education } from "../types/cv.types";
 
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import {
+  EducationFormValues,
+  educationSchema,
+} from "../validation/educationSchema";
+
+type FormValues = EducationFormValues;
+
 export default function EducationScreen() {
   const router = useRouter();
   const { cvData, addEducation, deleteEducation } = useCVContext();
 
-  const [formData, setFormData] = useState<Omit<Education, "id">>({
-    institution: "",
-    degree: "",
-    field: "",
-    graduationYear: "",
+  // const [formData, setFormData] = useState<Omit<Education, "id">>({
+  //   institution: "",
+  //   degree: "",
+  //   field: "",
+  //   graduationYear: "",
+  // });
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(educationSchema),
+    defaultValues: {
+      institution: "",
+      degree: "",
+      field: null,
+      graduationYear: null,
+    },
+    mode: "onBlur",
   });
 
-  const handleAdd = () => {
-    if (!formData.institution || !formData.degree) {
-      Alert.alert("Error", "Por favor completa al menos institución y título");
-      return;
-    }
-
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
     const newEducation: Education = {
       id: Date.now().toString(),
-      ...formData,
+      ...data,
+      field: data.field || "",
+      graduationYear: data.graduationYear ? String(data.graduationYear) : "",
     };
 
     addEducation(newEducation);
-
-    // Limpiar formulario
-    setFormData({
-      institution: "",
-      degree: "",
-      field: "",
-      graduationYear: "",
-    });
-
+    reset();
     Alert.alert("Éxito", "Educación agregada correctamente");
   };
+
+  // const handleAdd = () => {
+  //   if (!formData.institution || !formData.degree) {
+  //     Alert.alert("Error", "Por favor completa al menos institución y título");
+  //     return;
+  //   }
+
+  //   const newEducation: Education = {
+  //     id: Date.now().toString(),
+  //     ...formData,
+  //   };
+
+  //   addEducation(newEducation);
+
+  //   // Limpiar formulario
+  //   setFormData({
+  //     institution: "",
+  //     degree: "",
+  //     field: "",
+  //     graduationYear: "",
+  //   });
+
+  //   Alert.alert("Éxito", "Educación agregada correctamente");
+  // };
 
   const handleDelete = (id: string) => {
     Alert.alert("Confirmar", "¿Estás seguro de eliminar esta educación?", [
@@ -66,40 +104,72 @@ export default function EducationScreen() {
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Agregar Nueva Educación</Text>
 
-        <InputField
-          label="Institución *"
-          placeholder="Nombre de la universidad/institución"
-          value={formData.institution}
-          onChangeText={(text) =>
-            setFormData({ ...formData, institution: text })
-          }
+        <Controller
+          control={control}
+          name="institution"
+          render={({ field }) => (
+            <InputField
+              label="Institución *"
+              placeholder="Nombre de la universidad/institución"
+              field={field}
+              error={errors.institution}
+            />
+          )}
         />
 
-        <InputField
-          label="Título/Grado *"
-          placeholder="Ej: Licenciatura, Maestría"
-          value={formData.degree}
-          onChangeText={(text) => setFormData({ ...formData, degree: text })}
+        <Controller
+          control={control}
+          name="degree"
+          render={({ field }) => (
+            <InputField
+              label="Título/Grado *"
+              placeholder="Ej: Licenciatura, Maestría"
+              field={field}
+              error={errors.degree}
+            />
+          )}
         />
 
-        <InputField
-          label="Área de Estudio"
-          placeholder="Ej: Ingeniería en Sistemas"
-          value={formData.field}
-          onChangeText={(text) => setFormData({ ...formData, field: text })}
+        <Controller
+          control={control}
+          name="field"
+          render={({ field }) => (
+            <InputField
+              label="Área de Estudio"
+              placeholder="Ej: Ingeniería en Sistemas"
+              field={field}
+              error={errors.field}
+            />
+          )}
         />
 
-        <InputField
-          label="Año de Graduación"
-          placeholder="Ej: 2023"
-          value={formData.graduationYear}
-          onChangeText={(text) =>
-            setFormData({ ...formData, graduationYear: text })
-          }
-          keyboardType="numeric"
+        <Controller
+          control={control}
+          name="graduationYear"
+          render={({ field }) => (
+            <InputField
+              label="Año de Graduación"
+              placeholder="Ej: 2023"
+              field={field}
+              error={errors.graduationYear}
+              keyboardType="numeric"
+              onChangeText={(text) => {
+                const value = text === "" ? null : Number(text);
+                field.onChange(value);
+              }}
+              value={
+                field.value !== null && field.value !== undefined
+                  ? String(field.value)
+                  : ""
+              }
+            />
+          )}
         />
 
-        <NavigationButton title="Agregar Educación" onPress={handleAdd} />
+        <NavigationButton
+          title="Agregar Educación"
+          onPress={handleSubmit(onSubmit)}
+        />
 
         {cvData.education.length > 0 && (
           <>
