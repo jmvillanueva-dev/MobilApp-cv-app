@@ -23,15 +23,35 @@ export const CVPreview = ({ cvData }: CVPreviewProps) => {
             />
           )}
           <View style={styles.headerText}>
-            <Text style={styles.name}>{personalInfo.fullName || "Nombre"}</Text>
+            <Text style={styles.name} numberOfLines={2} ellipsizeMode="tail">
+              {personalInfo.fullName || "Nombre"}
+            </Text>
             {personalInfo.email && (
-              <Text style={styles.contact}>📧 {personalInfo.email}</Text>
+              <Text
+                style={styles.contact}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                📧 {personalInfo.email}
+              </Text>
             )}
             {personalInfo.phone && (
-              <Text style={styles.contact}>📱 {personalInfo.phone}</Text>
+              <Text
+                style={styles.contact}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                📱 {personalInfo.phone}
+              </Text>
             )}
             {personalInfo.location && (
-              <Text style={styles.contact}>📍 {personalInfo.location}</Text>
+              <Text
+                style={styles.contact}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                📍 {personalInfo.location}
+              </Text>
             )}
           </View>
         </View>
@@ -98,8 +118,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     borderRadius: 50,
     marginRight: 16,
     borderWidth: 3,
@@ -109,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#2c3e50",
     marginBottom: 8,
