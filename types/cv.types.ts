@@ -1,5 +1,7 @@
 // types/cv.types.ts
 
+export type SkillLevel = "básico" | "intermedio" | "avanzado" | "experto";
+
 export interface PersonalInfo {
   fullName: string;
   email: string;
@@ -26,8 +28,16 @@ export interface Education {
   graduationYear: string;
 }
 
+export interface Skill {
+  id: string;
+  name: string;
+  level: SkillLevel;
+}
+
+
 export interface CVData {
   personalInfo: PersonalInfo;
   experiences: Experience[];
   education: Education[];
+  skills: Skill[];
 }

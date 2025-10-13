@@ -2,14 +2,29 @@
 
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { CVData } from "../types/cv.types";
+import { CVData, SkillLevel } from "../types/cv.types";
 
 interface CVPreviewProps {
   cvData: CVData;
 }
 
+const getLevelIndicator = (level: SkillLevel) => {
+  switch (level) {
+    case "básico":
+      return "🟠◻️◻️◻️";
+    case "intermedio":
+      return "🔵🔵◻️◻️";
+    case "avanzado":
+      return "🟢🟢🟢◻️";
+    case "experto":
+      return "🟣🟣🟣🟣";
+    default:
+      return "";
+  }
+};
+
 export const CVPreview = ({ cvData }: CVPreviewProps) => {
-  const { personalInfo, experiences, education } = cvData;
+  const { personalInfo, experiences, education, skills } = cvData;
 
   return (
     <ScrollView style={styles.container}>
@@ -55,7 +70,6 @@ export const CVPreview = ({ cvData }: CVPreviewProps) => {
             )}
           </View>
         </View>
-
         {/* Resumen */}
         {personalInfo.summary && (
           <View style={styles.section}>
@@ -63,7 +77,6 @@ export const CVPreview = ({ cvData }: CVPreviewProps) => {
             <Text style={styles.text}>{personalInfo.summary}</Text>
           </View>
         )}
-
         {/* Experiencia */}
         {experiences.length > 0 && (
           <View style={styles.section}>
@@ -82,7 +95,6 @@ export const CVPreview = ({ cvData }: CVPreviewProps) => {
             ))}
           </View>
         )}
-
         {/* Educación */}
         {education.length > 0 && (
           <View style={styles.section}>
@@ -97,6 +109,34 @@ export const CVPreview = ({ cvData }: CVPreviewProps) => {
                 <Text style={styles.itemDate}>{edu.graduationYear}</Text>
               </View>
             ))}
+          </View>
+        )}
+        {/* Habilidades Técnicas (Skills) */}
+        {skills.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Habilidades Técnicas</Text>
+            <View style={styles.skillsContainer}>
+              {skills.map((skill) => (
+                <View key={skill.id} style={styles.skillItem}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <Text style={styles.skillName}>{skill.name}</Text>
+                    <Text style={styles.skillLevel}>
+                      {skill.level.charAt(0).toUpperCase() +
+                        skill.level.slice(1)}
+                    </Text>
+                  </View>
+                  <Text style={styles.skillLevel}>
+                    {getLevelIndicator(skill.level)}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
       </View>
@@ -180,5 +220,31 @@ const styles = StyleSheet.create({
     color: "#2c3e50",
     lineHeight: 20,
     marginTop: 4,
+  },
+  skillsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  skillItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#ecf0f1",
+    borderRadius: 10,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    marginBottom: 8,
+    borderColor: "#bdc3c7",
+    borderWidth: 1,
+  },
+  skillName: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#34495e",
+    marginBottom: 2,
+  },
+  skillLevel: {
+    fontSize: 12,
+    color: "#7f8c8d",
   },
 });

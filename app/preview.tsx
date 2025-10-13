@@ -1,6 +1,6 @@
 // app/preview.tsx
 import { CVPreview } from "@/components/CVPreview";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,10 +9,17 @@ import { useCVContext } from "../context/CVContext";
 import { NavigationButton } from "@/components/NavigationButton";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import { CVData, Education, Experience } from "../types/cv.types";
+import {
+  CVData,
+  Education,
+  Experience,
+  Skill,
+  SkillLevel,
+} from "../types/cv.types";
 
 import * as FileSystem from "expo-file-system/legacy";
 
+// --- Función para convertir imagen a base64 ---
 const getBase64Image = async (uri: string): Promise<string | null> => {
   try {
     const base64 = await FileSystem.readAsStringAsync(uri, {
@@ -29,7 +36,7 @@ const getBase64Image = async (uri: string): Promise<string | null> => {
 
 // Función para generar HTML del CV a partir de los datos.
 const generateCVHtml = (data: CVData): string => {
-  const { personalInfo, experiences, education } = data;
+  const { personalInfo, experiences, education, skills } = data;
 
   // Generación de la sección de Experiencia
   const experienceHtml = experiences
@@ -62,7 +69,38 @@ const generateCVHtml = (data: CVData): string => {
     )
     .join("");
 
-  // Manejo de la foto
+  // Generación de la sección de Skills
+  const getLevelIndicator = (level: SkillLevel) => {
+    switch (level) {
+      case "básico":
+        return "🟠◻️◻️◻️";
+      case "intermedio":
+        return "🔵🔵◻️◻️";
+      case "avanzado":
+        return "🟢🟢🟢◻️";
+      case "experto":
+        return "🟣🟣🟣🟣";
+      default:
+        return "";
+    }
+  };
+
+  const skillHtml = skills
+    .map(
+      (skill: Skill) => `
+    <div class="skill-item">
+        <h3 class="item-title">${skill.name}</h3>
+        <span class="skill-level level-${skill.level}"> 
+        <span>${getLevelIndicator(skill.level)} <span>
+        [${skill.level.charAt(0).toUpperCase() + skill.level.slice(1)}] 
+        
+        </span>
+    </div>
+  `
+    )
+    .join("");
+
+    // Manejo de la foto
   const photoTag = personalInfo.profileImage
     ? `<img src="${personalInfo.profileImage}" alt="Foto de Perfil" class="photo"/>`
     : "";
@@ -89,13 +127,19 @@ const generateCVHtml = (data: CVData): string => {
         .section { margin-top: 10px; }
         .section-title { font-size: 20px; color: #2c3e50; border-bottom: 1px solid #3498db; padding-bottom: 5px; margin-bottom: 15px; font-weight: 700; }
         
-        /* Estilos de ítem (Experiencia/Educación) */
+        /* Estilos de ítem (Experiencia/Educacion/Skills) */
         .item { margin-bottom: 10px; page-break-inside: avoid; }
         .item-title { font-weight: 600; margin-bottom: 1px; font-size: 16px; color: #000; }
         .item-subtitle { font-style: italic; font-size: 13px; color: #4b5563; margin-bottom: 5px; }
         .date-range { float: right; font-size: 12px; color: #6b7280; font-weight: 400; }
         .description { font-size: 14px; margin-top: 5px; line-height: 1.5; white-space: pre-wrap; }
-        
+        .skill-item { display:flex; flex-direction:row; gap:20px; align-items:flex-end; margin-bottom: 8px; }
+        .skill-level { font-size: 14px; font-weight: 500; text-align: left;}
+        .level-básico { color: #f39c12;}
+        .level-intermedio { color: #2980b9;}
+        .level-avanzado { color: #27ae60;}
+        .level-experto { color: #8e44ad;font-weight: bold;}
+
         /* Estilos del resumen */
         .summary { font-style: italic; margin-top: 10px; line-height: 1.6; color: #4b5563; }
         
@@ -174,6 +218,17 @@ const generateCVHtml = (data: CVData): string => {
             </div>`
             : ""
         }
+
+        <!-- Skills -->
+        ${
+          skills.length > 0
+            ? `
+            <div class="section">
+                <h2 class="section-title">Habilidades Técnicas</h2>
+                ${skillHtml}
+            </div>`
+            : ""
+        }
         
       </div>
     </body>
@@ -183,7 +238,6 @@ const generateCVHtml = (data: CVData): string => {
 
 export default function PreviewScreen() {
   const { cvData } = useCVContext();
-  const router = useRouter();
 
   // Función para generar y compartir PDF
   const handleGenerateAndSharePDF = async () => {
@@ -244,13 +298,6 @@ export default function PreviewScreen() {
       <Stack.Screen
         options={{
           headerTitle: "Vista Previa CV",
-          headerRight: () => (
-            <NavigationButton
-              title="Editar"
-              variant="primary"
-              onPress={() => router.navigate("/")}
-            />
-          ),
         }}
       />
       <ScrollView contentContainerStyle={styles.scrollContent}>
