@@ -31,9 +31,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         <Picker
           selectedValue={field.value}
           onValueChange={(itemValue) => field.onChange(itemValue)}
-          onBlur={field.onBlur} // Importante para la validación onBlur
+          onBlur={field.onBlur}
           style={styles.picker}
-          // Usar un color distinto si hay un placeholder (que es la primera opción)
           itemStyle={styles.pickerItem}
         >
           {options.map((option) => (
@@ -66,12 +65,12 @@ const styles = StyleSheet.create({
     borderColor: "#bdc3c7",
     borderRadius: 8,
     backgroundColor: "#fff",
-    overflow: "hidden", // Asegura que el picker se vea dentro del borde
+    overflow: "hidden",
     justifyContent: "center",
-    height: 50, // Altura estándar para alinearse con InputField
+    height: 50,
   },
   inputError: {
-    borderColor: "#e74c3c", // Rojo para error
+    borderColor: "#e74c3c",
     borderWidth: 2,
   },
   picker: {

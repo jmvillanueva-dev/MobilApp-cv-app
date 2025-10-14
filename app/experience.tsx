@@ -77,34 +77,6 @@ export default function ExperienceScreen() {
     Alert.alert("Éxito", "Experiencia agregada correctamente");
   };
 
-  // const handleAdd = () => {
-  //   if (!formData.company || !formData.position || !formData.startDate) {
-  //     Alert.alert(
-  //       "Error",
-  //       "Por favor completa al menos empresa, cargo y fecha de inicio"
-  //     );
-  //     return;
-  //   }
-
-  //   const newExperience: Experience = {
-  //     id: Date.now().toString(),
-  //     ...formData,
-  //   };
-
-  //   addExperience(newExperience);
-
-  //   // Limpiar formulario
-  //   setFormData({
-  //     company: "",
-  //     position: "",
-  //     startDate: "",
-  //     endDate: "",
-  //     description: "",
-  //   });
-
-  //   Alert.alert("Éxito", "Experiencia agregada correctamente");
-  // };
-
   const handleDelete = (id: string) => {
     Alert.alert("Confirmar", "¿Estás seguro de eliminar esta experiencia?", [
       { text: "Cancelar", style: "cancel" },

@@ -241,7 +241,6 @@ export default function PreviewScreen() {
 
   // Función para generar y compartir PDF
   const handleGenerateAndSharePDF = async () => {
-    // Si hay imagen, convertirla a base64
     let updatedData = { ...cvData };
 
     if (cvData.personalInfo.profileImage) {
@@ -255,10 +254,6 @@ export default function PreviewScreen() {
 
     // Generar el contenido HTML
     const htmlContent = generateCVHtml(cvData);
-    const fileName = `${cvData.personalInfo.fullName.replace(
-      /\s/g,
-      "_"
-    )}_CV.pdf`;
 
     try {
       // 2. Generar el archivo PDF
@@ -290,10 +285,6 @@ export default function PreviewScreen() {
   };
 
   return (
-    // <View style={styles.container}>
-    //   <CVPreview cvData={cvData} />
-    // </View>
-
     <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{

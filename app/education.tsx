@@ -28,13 +28,6 @@ export default function EducationScreen() {
   const router = useRouter();
   const { cvData, addEducation, deleteEducation } = useCVContext();
 
-  // const [formData, setFormData] = useState<Omit<Education, "id">>({
-  //   institution: "",
-  //   degree: "",
-  //   field: "",
-  //   graduationYear: "",
-  // });
-
   const {
     control,
     handleSubmit,
@@ -63,30 +56,6 @@ export default function EducationScreen() {
     reset();
     Alert.alert("Éxito", "Educación agregada correctamente");
   };
-
-  // const handleAdd = () => {
-  //   if (!formData.institution || !formData.degree) {
-  //     Alert.alert("Error", "Por favor completa al menos institución y título");
-  //     return;
-  //   }
-
-  //   const newEducation: Education = {
-  //     id: Date.now().toString(),
-  //     ...formData,
-  //   };
-
-  //   addEducation(newEducation);
-
-  //   // Limpiar formulario
-  //   setFormData({
-  //     institution: "",
-  //     degree: "",
-  //     field: "",
-  //     graduationYear: "",
-  //   });
-
-  //   Alert.alert("Éxito", "Educación agregada correctamente");
-  // };
 
   const handleDelete = (id: string) => {
     Alert.alert("Confirmar", "¿Estás seguro de eliminar esta educación?", [
