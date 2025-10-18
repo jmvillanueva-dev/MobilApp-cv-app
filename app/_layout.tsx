@@ -21,7 +21,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="index"
           options={{
-            title: "Crear CV",
+            title: "CREAR CV",
             headerShown: true,
           }}
         />
