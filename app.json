@@ -35,6 +35,10 @@
         "backgroundColor": "#3498db"
       }
     },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png"
+    },
     "plugins": [
       [
         "expo-image-picker",

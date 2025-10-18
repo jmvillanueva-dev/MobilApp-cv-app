@@ -2,6 +2,7 @@
 
 import { Stack } from "expo-router";
 import { CVProvider } from "../context/CVContext";
+import "./global.css";
 
 export default function RootLayout() {
   return (
