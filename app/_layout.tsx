@@ -50,7 +50,7 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="skill"
+          name="skills"
           options={{
             title: "Habilidades",
           }}
