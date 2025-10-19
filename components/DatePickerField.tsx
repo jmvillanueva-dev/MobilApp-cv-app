@@ -1,5 +1,3 @@
-// components/DatePickerField.tsx
-
 import DateTimePicker from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
 import React, { useState } from "react";
@@ -8,13 +6,7 @@ import {
   FieldError,
   FieldValues,
 } from "react-hook-form";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface DatePickerFieldProps<TFieldValues extends FieldValues = FieldValues> {
   label: string;
@@ -24,7 +16,9 @@ interface DatePickerFieldProps<TFieldValues extends FieldValues = FieldValues> {
   maximumDate?: Date;
 }
 
-export const DatePickerField = <TFieldValues extends FieldValues = FieldValues>({
+export const DatePickerField = <
+  TFieldValues extends FieldValues = FieldValues
+>({
   label,
   placeholder,
   error,
@@ -34,13 +28,12 @@ export const DatePickerField = <TFieldValues extends FieldValues = FieldValues>(
   const [showPicker, setShowPicker] = useState(false);
 
   const displayValue =
-    field.value && typeof field.value === 'object' && 'getTime' in field.value
+    field.value && typeof field.value === "object" && "getTime" in field.value
       ? dayjs(field.value).format("DD/MM/YYYY")
       : placeholder || "Seleccionar fecha";
 
   const onChange = (event: any, selectedDate?: Date) => {
-    setShowPicker(Platform.OS === "ios");
-
+    setShowPicker(false);
     if (selectedDate) {
       field.onChange(selectedDate);
     }
@@ -53,27 +46,28 @@ export const DatePickerField = <TFieldValues extends FieldValues = FieldValues>(
   const errorMessage = error?.message;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+    <View className="mb-4">
+      <Text className="text-lg font-semibold text-darkbluebrand mb-2">
+        {label}
+      </Text>
 
-      {/* TouchableOpacity simula el campo de texto y activa el picker */}
       <TouchableOpacity
         onPress={showDatepicker}
-        style={[
-          styles.inputContainer,
-          errorMessage && styles.inputErrorContainer,
-        ]}
+        className={`border rounded-lg p-3 bg-white ${
+          errorMessage ? "border-red-500" : "border-gray-300"
+        }`}
         onBlur={field.onBlur}
       >
         <Text
-          style={[styles.textInput, !field.value && styles.placeholderText]}
+          className={`text-base ${
+            !field.value ? "text-gray-500" : "text-black"
+          }`}
         >
           {displayValue}
         </Text>
       </TouchableOpacity>
 
-      {/* Mostrar el picker en función del estado 'showPicker' y la plataforma */}
-      {(showPicker || Platform.OS === "ios") && (
+      {showPicker && (
         <DateTimePicker
           value={
             field.value &&
@@ -89,40 +83,9 @@ export const DatePickerField = <TFieldValues extends FieldValues = FieldValues>(
         />
       )}
 
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+      {errorMessage && (
+        <Text className="text-red-500 text-sm mt-1">{errorMessage}</Text>
+      )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 14,
-    marginBottom: 5,
-    fontWeight: "600",
-  },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-  },
-  inputErrorContainer: {
-    borderColor: "red",
-  },
-  textInput: {
-    fontSize: 16,
-    color: "#000",
-  },
-  placeholderText: {
-    color: "#999",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 12,
-    marginTop: 5,
-  },
-});

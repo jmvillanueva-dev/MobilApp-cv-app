@@ -1,43 +1,24 @@
-// app/experience.tsx
-
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
+import dayjs from "dayjs";
 import React from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { InputField } from "../components/InputField";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { DatePickerField } from "../components/DatePickerField";
+import { InputField } from "../components/InputField";
 import { NavigationButton } from "../components/NavigationButton";
 import { useCVContext } from "../context/CVContext";
 import { Experience } from "../types/cv.types";
-
 import {
   ExperienceFormValues,
   experienceSchema,
-} from "@/validation/experienceSchema";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
-import dayjs from "dayjs";
+} from "../validation/experienceSchema";
 
 type FormValues = ExperienceFormValues;
 
 export default function ExperienceScreen() {
   const router = useRouter();
   const { cvData, addExperience, deleteExperience } = useCVContext();
-
-  // const [formData, setFormData] = useState<Omit<Experience, "id">>({
-  //   company: "",
-  //   position: "",
-  //   startDate: "",
-  //   endDate: "",
-  //   description: "",
-  // });
 
   const {
     control,
@@ -56,7 +37,6 @@ export default function ExperienceScreen() {
     mode: "onBlur",
   });
 
-
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const newExperience: Experience = {
       id: Date.now().toString(),
@@ -64,12 +44,11 @@ export default function ExperienceScreen() {
       position: data.position,
       description: data.description || "",
       startDate: dayjs(data.startDate).format("DD/MM/YYYY"),
-      endDate:
-        !data.endDate
-          ? "Actual"
-          : data.endDate instanceof Date
-          ? dayjs(data.endDate).format("DD/MM/YYYY")
-          : "",
+      endDate: !data.endDate
+        ? "Actual"
+        : data.endDate instanceof Date
+        ? dayjs(data.endDate).format("DD/MM/YYYY")
+        : "",
     };
 
     addExperience(newExperience);
@@ -89,9 +68,11 @@ export default function ExperienceScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Agregar Nueva Experiencia</Text>
+    <ScrollView className="flex-1 bg-whitebrand">
+      <View className="p-5">
+        <Text className="text-xl font-bold text-darkbluebrand mb-4">
+          Agregar Nueva Experiencia
+        </Text>
 
         <Controller
           control={control}
@@ -172,21 +153,30 @@ export default function ExperienceScreen() {
 
         {cvData.experiences.length > 0 && (
           <>
-            <Text style={styles.listTitle}>Experiencias Agregadas</Text>
+            <Text className="text-lg font-semibold text-darkbluebrand mt-6 mb-3">
+              Experiencias Agregadas
+            </Text>
             {cvData.experiences.map((exp) => (
-              <View key={exp.id} style={styles.card}>
-                <View style={styles.cardContent}>
-                  <Text style={styles.cardTitle}>{exp.position}</Text>
-                  <Text style={styles.cardSubtitle}>{exp.company}</Text>
-                  <Text style={styles.cardDate}>
+              <View
+                key={exp.id}
+                className="bg-white rounded-lg p-4 mb-3 flex-row shadow-md"
+              >
+                <View className="flex-1">
+                  <Text className="text-base font-semibold text-darkbluebrand mb-1">
+                    {exp.position}
+                  </Text>
+                  <Text className="text-sm text-gray-500 mb-1">
+                    {exp.company}
+                  </Text>
+                  <Text className="text-xs text-gray-400">
                     {exp.startDate} - {exp.endDate || "Actual"}
                   </Text>
                 </View>
                 <TouchableOpacity
-                  style={styles.deleteButton}
+                  className="w-8 h-8 rounded-full bg-red-500 justify-center items-center"
                   onPress={() => handleDelete(exp.id)}
                 >
-                  <Text style={styles.deleteButtonText}>✕</Text>
+                  <Text className="text-white text-lg font-bold">✕</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -203,69 +193,3 @@ export default function ExperienceScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  content: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 16,
-  },
-  listTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#2c3e50",
-    marginTop: 24,
-    marginBottom: 12,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: "row",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#2c3e50",
-    marginBottom: 4,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: "#7f8c8d",
-    marginBottom: 4,
-  },
-  cardDate: {
-    fontSize: 12,
-    color: "#95a5a6",
-  },
-  deleteButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#e74c3c",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});

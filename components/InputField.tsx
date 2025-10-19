@@ -24,7 +24,7 @@ export const InputField = ({
         {label}
       </Text>
       <TextInput
-        className={`border rounded-lg p-3 text-lg bg-whitebrand ${
+        className={`border rounded-lg p-3 text-lg bg-white ${
           errorMessage ? "border-red-500" : "border-gray-300"
         }`}
         placeholderTextColor="#999"
