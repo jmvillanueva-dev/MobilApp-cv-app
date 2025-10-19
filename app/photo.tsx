@@ -1,16 +1,7 @@
-// app/photo.tsx
-
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { NavigationButton } from "../components/NavigationButton";
 import { useCVContext } from "../context/CVContext";
 
@@ -21,10 +12,8 @@ export default function PhotoScreen() {
     cvData.personalInfo.profileImage
   );
 
-  // Solicitar permisos y tomar foto con la cámara
   const takePhoto = async () => {
     try {
-      // Solicitar permisos de cámara
       const cameraPermission =
         await ImagePicker.requestCameraPermissionsAsync();
 
@@ -36,10 +25,9 @@ export default function PhotoScreen() {
         return;
       }
 
-      // Abrir la cámara
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
-        aspect: [1, 1], // Aspecto cuadrado
+        aspect: [1, 1],
         quality: 0.8,
       });
 
@@ -52,10 +40,8 @@ export default function PhotoScreen() {
     }
   };
 
-  // Seleccionar foto de la galería
   const pickImage = async () => {
     try {
-      // Solicitar permisos de galería
       const galleryPermission =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -67,7 +53,6 @@ export default function PhotoScreen() {
         return;
       }
 
-      // Abrir galería
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -84,7 +69,6 @@ export default function PhotoScreen() {
     }
   };
 
-  // Guardar la foto
   const handleSave = () => {
     updatePersonalInfo({
       ...cvData.personalInfo,
@@ -95,7 +79,6 @@ export default function PhotoScreen() {
     ]);
   };
 
-  // Eliminar foto
   const handleRemove = () => {
     Alert.alert("Confirmar", "¿Estás seguro de eliminar la foto de perfil?", [
       { text: "Cancelar", style: "cancel" },
@@ -114,34 +97,51 @@ export default function PhotoScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Foto de Perfil</Text>
+    <View className="flex-1 p-5 bg-whitebrand">
+      <Text className="text-2xl font-bold text-darkbluebrand mb-5 text-center">
+        Foto de Perfil
+      </Text>
 
-      <View style={styles.imageContainer}>
+      <View className="items-center mb-8">
         {selectedImage ? (
-          <Image source={{ uri: selectedImage }} style={styles.image} />
+          <Image
+            source={{ uri: selectedImage }}
+            className="w-[200px] h-[200px] rounded-full border-[3px] border-bluebrand"
+          />
         ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Sin foto</Text>
+          <View className="w-[200px] h-[200px] rounded-[100px] bg-gray-200 justify-center items-center border-[3px] border-gray-300">
+            <Text className="text-gray-500 text-lg">Sin foto</Text>
           </View>
         )}
-      </View>
+      </View> 
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.actionButton} onPress={takePhoto}>
-          <Text style={styles.actionButtonText}>📷 Tomar Foto</Text>
+      <View className="mb-5">
+        <TouchableOpacity
+          className="bg-bluebrand p-4 rounded-lg mb-3 items-center"
+          onPress={takePhoto}
+        >
+          <Text className="text-white text-lg font-semibold">
+            📷 Tomar Foto
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton} onPress={pickImage}>
-          <Text style={styles.actionButtonText}>🖼️ Seleccionar de Galería</Text>
+        <TouchableOpacity
+          className="bg-bluebrand p-4 rounded-lg mb-3 items-center"
+          onPress={pickImage}
+        >
+          <Text className="text-white text-lg font-semibold">
+            🖼️ Seleccionar de Galería
+          </Text>
         </TouchableOpacity>
 
         {selectedImage && (
           <TouchableOpacity
-            style={[styles.actionButton, styles.removeButton]}
+            className="bg-red-500 p-4 rounded-lg mb-3 items-center"
             onPress={handleRemove}
           >
-            <Text style={styles.actionButtonText}>🗑️ Eliminar Foto</Text>
+            <Text className="text-white text-lg font-semibold">
+              🗑️ Eliminar Foto
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -156,61 +156,3 @@ export default function PhotoScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  imageContainer: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderWidth: 3,
-    borderColor: "#3498db",
-  },
-  placeholder: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: "#e0e0e0",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 3,
-    borderColor: "#bdc3c7",
-  },
-  placeholderText: {
-    color: "#7f8c8d",
-    fontSize: 16,
-  },
-  buttonContainer: {
-    marginBottom: 20,
-  },
-  actionButton: {
-    backgroundColor: "#3498db",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    alignItems: "center",
-  },
-  removeButton: {
-    backgroundColor: "#e74c3c",
-  },
-  actionButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

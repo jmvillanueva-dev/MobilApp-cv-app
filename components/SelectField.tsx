@@ -1,15 +1,13 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { FieldError, ControllerRenderProps } from "react-hook-form";
+import React from "react";
+import { ControllerRenderProps, FieldError } from "react-hook-form";
+import { Text, View } from "react-native";
 
-// Interfaz para las opciones del selector
 interface SelectOption {
   label: string;
   value: string;
 }
 
-// Interfaz para las props del componente SelectField
 interface SelectFieldProps {
   label: string;
   placeholder: string;
@@ -25,15 +23,21 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   error,
 }) => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={[styles.pickerContainer, error && styles.inputError]}>
+    <View className="mb-4 w-full">
+      <Text className="text-lg text-darkbluebrand font-semibold mb-1">
+        {label}
+      </Text>
+      <View
+        className={`border rounded-lg bg-white overflow-hidden justify-center h-[50px] ${
+          error ? "border-red-500 border-2" : "border-gray-300"
+        }`}
+      >
         <Picker
           selectedValue={field.value}
           onValueChange={(itemValue) => field.onChange(itemValue)}
           onBlur={field.onBlur}
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
+          style={{ width: "100%", height: 50 }}
+          itemStyle={{ fontSize: 16, height: 50 }}
         >
           {options.map((option) => (
             <Picker.Item
@@ -44,46 +48,9 @@ export const SelectField: React.FC<SelectFieldProps> = ({
           ))}
         </Picker>
       </View>
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
+      {error && (
+        <Text className="mt-1 text-red-500 text-xs">{error.message}</Text>
+      )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-    width: "100%",
-  },
-  label: {
-    fontSize: 16,
-    color: "#2c3e50",
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: "#bdc3c7",
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    overflow: "hidden",
-    justifyContent: "center",
-    height: 50,
-  },
-  inputError: {
-    borderColor: "#e74c3c",
-    borderWidth: 2,
-  },
-  picker: {
-    width: "100%",
-    height: 50,
-  },
-  pickerItem: {
-    fontSize: 16,
-    height: 50,
-  },
-  errorText: {
-    marginTop: 4,
-    color: "#e74c3c",
-    fontSize: 12,
-  },
-});

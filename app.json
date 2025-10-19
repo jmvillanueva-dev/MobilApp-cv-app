@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/images/icon.png",
+    "scheme": "cvcreator",
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",

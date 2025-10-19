@@ -2,11 +2,10 @@
 
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { InputField } from "../components/InputField";
 import { NavigationButton } from "../components/NavigationButton";
 import { useCVContext } from "../context/CVContext";
-// import { PersonalInfo } from "../types/cv.types";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -21,9 +20,6 @@ export default function PersonalInfoScreen() {
   const router = useRouter();
   const { cvData, updatePersonalInfo } = useCVContext();
 
-  // const [formData, setFormData] = useState<PersonalInfo>(cvData.personalInfo);
-
-  // Inicializar React-Hook-Form
   const {
     control,
     handleSubmit,
@@ -53,25 +49,9 @@ export default function PersonalInfoScreen() {
     );
   };
 
-  // useEffect(() => {
-  //   setFormData(cvData.personalInfo);
-  // }, [cvData.personalInfo]);
-
-  // const handleSave = () => {
-  //   if (!formData.fullName || !formData.email) {
-  //     Alert.alert("Error", "Por favor completa al menos el nombre y email");
-  //     return;
-  //   }
-
-  //   updatePersonalInfo(formData);
-  //   Alert.alert("Éxito", "Información guardada correctamente", [
-  //     { text: "OK", onPress: () => router.back() },
-  //   ]);
-  // };
-
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <ScrollView className="flex-1 bg-whitebrand">
+      <View className="p-5">
         <Controller
           control={control}
           name="fullName"
@@ -160,13 +140,3 @@ export default function PersonalInfoScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  content: {
-    padding: 20,
-  },
-});
